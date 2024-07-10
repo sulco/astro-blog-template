@@ -1,0 +1,22 @@
+name: Issue Labeled
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  reply-labeled:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: needs reproduction
+        if: github.event.label.name == 'needs reproduction'
+        uses: actions-cool/issues-helper@v3
+        with:
+          actions: "create-comment, remove-labels"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            Hello @${{ github.event.issue.user.login }}. Please provide a [minimal reproduction](https://stackoverflow.com/help/minimal-reproducible-example) using a GitHub repository or [StackBlitz](https://stackblitz.com/github.com/sulco/astro-blog-starter). Issues marked with `needs reproduction` will be closed if they have no activity within 3 days.
+          labels: "pending triage"
